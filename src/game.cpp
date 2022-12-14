@@ -1,6 +1,7 @@
 #include "./game.hpp"
 
 using namespace std;
+namespace plt = matplotlibcpp;
 
 Deck::Deck()
 {
@@ -181,32 +182,35 @@ char BasicStrategy::get_strategy(bool isPair, bool isAce, int hand, int house)
 
 BetSpread::BetSpread()
 {
-    this->count_to_bet[1] = 10;
-    this->count_to_bet[2] = 50;
-    this->count_to_bet[3] = 550;
-    this->count_to_bet[4] = 600;
-    this->count_to_bet[5] = 750;
+    this->count_to_bet[1] = {1, 50};
+    this->count_to_bet[2] = {1, 75};
+    this->count_to_bet[3] = {1, 300};
+    this->count_to_bet[4] = {2, 400};
+    this->count_to_bet[5] = {2, 500};
 }
 
-int BetSpread::get_bet(int count)
+pair<int, int> BetSpread::get_bet(int count)
 {
     if(count < 1) count = 1;
     if(count > 5) count = 5;
     return this->count_to_bet[count];
 }
 
-int Game::run_bot(int hands)
+int Game::run_bot(int game_loops)
 {
     BasicStrategy basicStrategy;
     BetSpread betSpread;
     int original_bank = this->bank;
-    int game_loops = 10000;
     int hand_cnt = game_loops;
-    while(game_loops > 0 && this->bank > 0)
+    vector<int> time;
+    vector<double> bank_at_time;
+    while(game_loops > 0)
     {
-        for(int i = 0; i < hands; i++)
+        time.push_back(hand_cnt-game_loops);
+        pair<int, int> decisions = betSpread.get_bet(this->TC);
+        for(int i = 0; i < decisions.first; i++)
         {
-            Hand hand(betSpread.get_bet(this->TC));
+            Hand hand(decisions.second);
             this->hands.push_back(hand);
         }
 
@@ -247,7 +251,7 @@ int Game::run_bot(int hands)
                 break;
         }
 
-        for(int i = 0; i < hands; i++)
+        for(int i = 0; i < decisions.first; i++)
         {
             int rounds = 0;
             this->hands[i].check();
@@ -378,12 +382,14 @@ int Game::run_bot(int hands)
         {
             this->reshuffle();
         }
+        bank_at_time.push_back(this->bank);
         game_loops--;
-        //if(game_loops % 100 == 0) cout << this->bank << endl;
     }
-    cout << this->bank << endl;
-    cout << "bet spread:\n1: " << betSpread.get_bet(1) << "\n2: " << betSpread.get_bet(2) << "\n3: " << betSpread.get_bet(3) << "\n4: " << betSpread.get_bet(4) << "\n5: " << betSpread.get_bet(5) << endl;
-    cout << "estimated profit in " << hand_cnt - game_loops << " hands is $" << this->bank - original_bank << endl;
+
+    plt::plot(time, bank_at_time);
+    plt::xlabel("hands played");
+    plt::ylabel("profit");
+    plt::show();
     return this->bank - original_bank;
 }
 

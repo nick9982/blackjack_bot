@@ -6,6 +6,8 @@
 #include <stack>
 #include <unordered_map>
 #include <chrono>
+#include "matplotlibcpp.h"
+
 #define noop (void)0
 
 using namespace std;
@@ -20,11 +22,11 @@ class BasicStrategy
 };
 
 class BetSpread{
-    unordered_map<int, int> count_to_bet;
+    unordered_map<int, pair<int, int>> count_to_bet;
 
     public:
         BetSpread();
-        int get_bet(int);
+        pair<int, int> get_bet(int);
 };
 
 class Deck{
