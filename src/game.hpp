@@ -25,7 +25,7 @@ class BetSpread{
     unordered_map<int, pair<int, int>> count_to_bet;
 
     public:
-        BetSpread();
+        BetSpread(vector<int>);
         pair<int, int> get_bet(int);
 };
 
@@ -97,7 +97,7 @@ class Game{
     public:
         Game(int, double, double, double, double);
         void start();
-        int run_bot(int);
+        int run_bot(int, vector<int>);
         void initial_deal();
         char draw_from_shoe();
         void display_initial_hand();

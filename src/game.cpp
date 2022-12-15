@@ -180,26 +180,28 @@ char BasicStrategy::get_strategy(bool isPair, bool isAce, int hand, int house)
     return this->bs_map[key];
 }
 
-BetSpread::BetSpread()
+BetSpread::BetSpread(vector<int> bets)
 {
-    this->count_to_bet[1] = {1, 50};
-    this->count_to_bet[2] = {1, 75};
-    this->count_to_bet[3] = {1, 300};
-    this->count_to_bet[4] = {2, 400};
-    this->count_to_bet[5] = {2, 500};
+    this->count_to_bet[0] = {1, bets[0]};
+    this->count_to_bet[1] = {1, bets[1]};
+    this->count_to_bet[2] = {1, bets[2]};
+    this->count_to_bet[3] = {1, bets[3]};
+    this->count_to_bet[4] = {2, bets[4]};
+    this->count_to_bet[5] = {2, bets[5]};
+    cout << bets[0] << " s " << bets[5] << endl;
 }
 
 pair<int, int> BetSpread::get_bet(int count)
 {
-    if(count < 1) count = 1;
+    if(count < 0) count = 0;
     if(count > 5) count = 5;
     return this->count_to_bet[count];
 }
 
-int Game::run_bot(int game_loops)
+int Game::run_bot(int game_loops, vector<int> bets)
 {
     BasicStrategy basicStrategy;
-    BetSpread betSpread;
+    BetSpread betSpread(bets);
     int original_bank = this->bank;
     int hand_cnt = game_loops;
     vector<int> time;
@@ -389,6 +391,7 @@ int Game::run_bot(int game_loops)
     plt::plot(time, bank_at_time);
     plt::xlabel("hands played");
     plt::ylabel("profit");
+    plt::title("Blackjack Spread Statistics");
     plt::show();
     return this->bank - original_bank;
 }
