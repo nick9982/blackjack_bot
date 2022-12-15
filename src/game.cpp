@@ -199,6 +199,7 @@ pair<int, int> BetSpread::get_bet(int count)
 
 int Game::run_bot(int game_loops, vector<int> bets)
 {
+    auto start = chrono::high_resolution_clock::now();
     BasicStrategy basicStrategy;
     BetSpread betSpread(bets);
     int original_bank = this->bank;
@@ -386,7 +387,10 @@ int Game::run_bot(int game_loops, vector<int> bets)
         bank_at_time.push_back(this->bank);
         game_loops--;
     }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::microseconds>(end-start);
 
+    cout << "runtime: " << duration.count() * 0.000001 << " seconds." << endl;
     plt::plot(time, bank_at_time);
     plt::xlabel("hands played");
     plt::ylabel("profit");
