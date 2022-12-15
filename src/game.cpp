@@ -188,7 +188,6 @@ BetSpread::BetSpread(vector<int> bets)
     this->count_to_bet[3] = {1, bets[3]};
     this->count_to_bet[4] = {2, bets[4]};
     this->count_to_bet[5] = {2, bets[5]};
-    cout << bets[0] << " s " << bets[5] << endl;
 }
 
 pair<int, int> BetSpread::get_bet(int count)
